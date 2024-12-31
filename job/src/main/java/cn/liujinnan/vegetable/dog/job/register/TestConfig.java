@@ -27,7 +27,6 @@ public class TestConfig implements SmartInitializingSingleton, ApplicationContex
     private ApplicationContext applicationContext;
 
 
-
     @Override
     public void afterSingletonsInstantiated() {
 
@@ -47,7 +46,6 @@ public class TestConfig implements SmartInitializingSingleton, ApplicationContex
             }
 
             new ScheduleJobBootstrap(zookeeperRegistryCenter, elasticJob).schedule();
-
         }
 
     }

@@ -14,15 +14,31 @@ import java.lang.annotation.*;
 @Indexed
 public @interface JobAnnotation {
 
+    String jobName() ;
+
     String cron() default "";
 
+    String timeZone() default "";
+
+
     /**
+     * Job parameter.
+     * 作业自定义参数
+     * @return
+     */
+    String jobParameter() default "";
+
+    /**
+     * Job description.
      * 任务描述
      * @return
      */
     String description() default "";
 
     /**
+     * Sharding total count.
+     * Returns: sharding total count
+     *
      * 默认分片数量 1
      * @return
      */
@@ -66,4 +82,40 @@ public @interface JobAnnotation {
      * @return
      */
     boolean misfire() default false;
+
+
+    /**
+     * The maximum value for time difference between server and registry center in seconds.
+     *
+     * @return max time diff seconds
+     */
+    int maxTimeDiffSeconds() default -1;
+
+    /**
+     * Service scheduling interval in minutes for repairing job server inconsistent state.
+     *
+     * @return reconcile interval minutes
+     */
+    int reconcileIntervalMinutes() default 10;
+
+    /**
+     * Job sharding strategy type.
+     *
+     * @return job sharding strategy type
+     */
+    String jobShardingStrategyType() default "";
+
+    /**
+     * Job thread pool handler type.
+     *
+     * @return job executor service handler type
+     */
+    String jobExecutorServiceHandlerType() default "";
+
+    /**
+     * Job listener types.
+     *
+     * @return job listener types
+     */
+    String[] jobListenerTypes() default {};
 }

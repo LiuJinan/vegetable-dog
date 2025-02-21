@@ -1,7 +1,8 @@
 package cn.liujinnan.vegetable.dog.job.register;
 
 import cn.liujinnan.vegetable.dog.job.annotation.JobAnnotation;
-import org.apache.shardingsphere.elasticjob.annotation.ElasticJobConfiguration;
+import com.google.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shardingsphere.elasticjob.api.ElasticJob;
 import org.apache.shardingsphere.elasticjob.api.JobConfiguration;
 import org.apache.shardingsphere.elasticjob.lite.api.bootstrap.impl.ScheduleJobBootstrap;
@@ -16,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
 import java.util.Map;
 import java.util.Objects;
 
@@ -57,18 +57,25 @@ public class JobRegister {
                 continue;
             }
 
-            String jobName = elasticJob.getClass().getSimpleName();
+            String jobName = StringUtils.isBlank(jobAnnotation.jobName()) ? elasticJob.getClass().getSimpleName() : jobAnnotation.jobName();
             //job任务配置
             JobConfiguration jobConfiguration = JobConfiguration.newBuilder(jobName, jobAnnotation.shardingTotalCount())
-                    .cron(jobAnnotation.cron())
-                    .description(jobAnnotation.description())
                     .shardingItemParameters(jobAnnotation.shardingItemParameters())
-                    .disabled(jobAnnotation.disabled())
-                    .overwrite(jobAnnotation.overwrite())
+                    .cron(Strings.isNullOrEmpty(jobAnnotation.cron()) ? null : jobAnnotation.cron())
+                    .timeZone(Strings.isNullOrEmpty(jobAnnotation.timeZone()) ? null : jobAnnotation.timeZone())
+                    .jobParameter(jobAnnotation.jobParameter())
                     .monitorExecution(jobAnnotation.monitorExecution())
-                    .jobErrorHandlerType(jobAnnotation.jobErrorHandlerType())
                     .failover(jobAnnotation.failover())
                     .misfire(jobAnnotation.misfire())
+                    .maxTimeDiffSeconds(jobAnnotation.maxTimeDiffSeconds())
+                    .reconcileIntervalMinutes(jobAnnotation.reconcileIntervalMinutes())
+                    .jobShardingStrategyType(Strings.isNullOrEmpty(jobAnnotation.jobShardingStrategyType()) ? null : jobAnnotation.jobShardingStrategyType())
+                    .jobExecutorServiceHandlerType(Strings.isNullOrEmpty(jobAnnotation.jobExecutorServiceHandlerType()) ? null : jobAnnotation.jobExecutorServiceHandlerType())
+                    .jobErrorHandlerType(Strings.isNullOrEmpty(jobAnnotation.jobErrorHandlerType()) ? null : jobAnnotation.jobErrorHandlerType())
+                    .jobListenerTypes(jobAnnotation.jobListenerTypes())
+                    .description(jobAnnotation.description())
+                    .disabled(jobAnnotation.disabled())
+                    .overwrite(jobAnnotation.overwrite())
                     .build();
             if (Objects.nonNull(tracingConfiguration)) {
                 // 数据源。存储执行记录

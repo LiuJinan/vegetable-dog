@@ -11,6 +11,7 @@ import org.apache.shardingsphere.elasticjob.tracing.api.TracingConfiguration;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
@@ -27,13 +28,13 @@ import java.util.Objects;
  */
 @Configuration
 @ConditionalOnExpression("'${elasticjob.reg-center.server-lists}'.length() > 0 && '${elasticjob.reg-center.namespace}'.length()>0")
-public class JobRegister {
+public class JobRegister implements CommandLineRunner {
 
     @Autowired
     private ApplicationContext applicationContext;
 
-    @PostConstruct
-    public void registerJob() {
+    @Override
+    public void run(String... args) throws Exception {
 //        ElasticJobConfiguration
         ZookeeperRegistryCenter zookeeperRegistryCenter = applicationContext.getBean(ZookeeperRegistryCenter.class);
         Map<String, ElasticJob> map = applicationContext.getBeansOfType(ElasticJob.class);

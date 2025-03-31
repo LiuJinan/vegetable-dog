@@ -1,13 +1,11 @@
 package cn.liujinnan.vegetable.dog.job;
 
 
-import cn.liujinnan.vegetable.dog.job.handler.JobDingTalkErrorHandler;
 import org.apache.shardingsphere.elasticjob.api.ShardingContext;
 import org.apache.shardingsphere.elasticjob.simple.job.SimpleJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StopWatch;
 
@@ -30,9 +28,6 @@ public abstract class AbstractSimpleJob implements SimpleJob {
 
     @Value("${vegetable.dog.job.mdc.key:TRACE_ID}")
     private String mdcKey;
-
-//    @Autowired
-//    private JobDingTalkErrorHandler jobDingTalkErrorHandler;
 
     @Override
     public void execute(ShardingContext shardingContext) {
@@ -58,7 +53,7 @@ public abstract class AbstractSimpleJob implements SimpleJob {
     protected abstract void executeJob(ShardingContext shardingContext);
 
     /**
-     * 配置了钉钉预警(job.dingtalk.webhook)，默认发送预警消息
+     * 默认发送预警消息
      *
      * @return
      */

@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-cn.liujinnan.vegetable.dog.job.register.JobRegister,cn.liujinnan.vegetable.dog.job.handler.JobDingTalkErrorHandler
+cn.liujinnan.vegetable.dog.job.register.JobRegister,cn.liujinnan.vegetable.dog.job.handler.JobDingTalkErrorHandler,cn.liujinnan.vegetable.dog.job.factory.JobFactory

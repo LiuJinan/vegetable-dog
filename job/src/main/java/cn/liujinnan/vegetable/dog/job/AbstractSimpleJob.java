@@ -33,13 +33,13 @@ public abstract class AbstractSimpleJob implements SimpleJob {
     public void execute(ShardingContext shardingContext) {
         MDC.put(mdcKey, UUID.randomUUID().toString());
         StopWatch stopWatch = new StopWatch();
-        String jobName = this.getClass().getSimpleName();
+        String className = this.getClass().getSimpleName();
         try {
             stopWatch.start();
-            log.info("任务[{}]开始执行", jobName);
+            log.info("任务[{}]开始执行", className);
             executeJob(shardingContext);
             stopWatch.stop();
-            log.info("任务[{}]执行完成, 耗时={}ms", jobName, stopWatch.getTotalTimeMillis());
+            log.info("任务[{}]执行完成, 耗时={}ms", className, stopWatch.getTotalTimeMillis());
         } finally {
             MDC.remove(mdcKey);
         }
@@ -51,15 +51,5 @@ public abstract class AbstractSimpleJob implements SimpleJob {
      * @param shardingContext
      */
     protected abstract void executeJob(ShardingContext shardingContext);
-
-    /**
-     * 默认发送预警消息
-     *
-     * @return
-     */
-    @Deprecated
-    protected boolean isAlarm() {
-        return true;
-    }
 
 }

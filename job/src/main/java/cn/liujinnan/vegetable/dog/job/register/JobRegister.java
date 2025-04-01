@@ -15,9 +15,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.EnumerablePropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertySource;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.PostConstruct;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -32,12 +36,14 @@ public class JobRegister implements CommandLineRunner {
 
     @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
+    private Environment environment;
 
     @Override
     public void run(String... args) throws Exception {
-//        ElasticJobConfiguration
         ZookeeperRegistryCenter zookeeperRegistryCenter = applicationContext.getBean(ZookeeperRegistryCenter.class);
         Map<String, ElasticJob> map = applicationContext.getBeansOfType(ElasticJob.class);
+        Map<String, Object> allProperties = getAllJobProp();
 
         //数据源配置
         TracingConfiguration<?> tracingConfiguration = getTracingConfiguration();
@@ -60,7 +66,8 @@ public class JobRegister implements CommandLineRunner {
 
             String jobName = StringUtils.isBlank(jobAnnotation.jobName()) ? elasticJob.getClass().getSimpleName() : jobAnnotation.jobName();
             //job任务配置
-            JobConfiguration jobConfiguration = JobConfiguration.newBuilder(jobName, jobAnnotation.shardingTotalCount())
+
+            JobConfiguration.Builder builder = JobConfiguration.newBuilder(jobName, jobAnnotation.shardingTotalCount())
                     .shardingItemParameters(jobAnnotation.shardingItemParameters())
                     .cron(Strings.isNullOrEmpty(jobAnnotation.cron()) ? null : jobAnnotation.cron())
                     .timeZone(Strings.isNullOrEmpty(jobAnnotation.timeZone()) ? null : jobAnnotation.timeZone())
@@ -76,8 +83,13 @@ public class JobRegister implements CommandLineRunner {
                     .jobListenerTypes(jobAnnotation.jobListenerTypes())
                     .description(jobAnnotation.description())
                     .disabled(jobAnnotation.disabled())
-                    .overwrite(jobAnnotation.overwrite())
-                    .build();
+                    .overwrite(jobAnnotation.overwrite());
+            // 加载配置。'elasticjob.jobs.props.' 开头
+            allProperties.forEach((key, val) -> {
+                builder.setProperty(key, (String) val);
+            });
+
+            JobConfiguration jobConfiguration = builder.build();
             if (Objects.nonNull(tracingConfiguration)) {
                 // 数据源。存储执行记录
                 jobConfiguration.getExtraConfigurations().add(tracingConfiguration);
@@ -95,5 +107,21 @@ public class JobRegister implements CommandLineRunner {
             return dataSourceConfig.values().stream().findFirst().get();
         }
         return null;
+    }
+
+    private Map<String, Object> getAllJobProp() {
+        Map<String, Object> properties = new HashMap<>();
+        if (environment instanceof ConfigurableEnvironment) {
+            for (PropertySource<?> propertySource : ((ConfigurableEnvironment) environment).getPropertySources()) {
+                if (propertySource instanceof EnumerablePropertySource) {
+                    for (String name : ((EnumerablePropertySource<?>) propertySource).getPropertyNames()) {
+                        if (Objects.nonNull(name) && name.contains("elasticjob.jobs.props.")) {
+                            properties.put(name.replace("elasticjob.jobs.props.", ""), propertySource.getProperty(name));
+                        }
+                    }
+                }
+            }
+        }
+        return properties;
     }
 }

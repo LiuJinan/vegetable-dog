@@ -1,3 +1,3 @@
 cn.liujinnan.vegetable.dog.job.register.JobRegister
-cn.liujinnan.vegetable.dog.job.handler.JobDingTalkErrorHandler
 org.apache.shardingsphere.elasticjob.lite.spring.boot.job.ElasticJobLiteAutoConfiguration
+cn.liujinnan.vegetable.dog.job.factory.JobFactory

@@ -1,6 +1,7 @@
-package cn.liujinnan.vegetable.dog.job.handler;
+package cn.liujinnan.vegetable.dog.job.handler.dingtalk;
 
 import cn.liujinnan.vegetable.dog.job.factory.JobFactory;
+import cn.liujinnan.vegetable.dog.job.handler.JobPropErrorHandler;
 import com.google.gson.JsonObject;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,8 @@ import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -29,7 +32,7 @@ import java.util.Properties;
  * @author liujinan
  */
 @Slf4j
-public class JobDingTalkErrorHandler implements JobErrorHandler {
+public class JobDingTalkErrorHandler implements JobPropErrorHandler {
 
     private static final int DEFAULT_CONNECT_TIMEOUT_MILLISECONDS = 3000;
 
@@ -93,12 +96,17 @@ public class JobDingTalkErrorHandler implements JobErrorHandler {
 
     @Override
     public void init(Properties props) {
-        this.webhook = props.getProperty("dingtalk.webhook");
+        this.webhook = props.getProperty(JobDingtalkPropertiesConstants.WEBHOOK);
     }
 
     @Override
     public String getType() {
         return "DT";
+    }
+
+    @Override
+    public List<String> propsPrefixes() {
+        return Collections.singletonList(JobDingtalkPropertiesConstants.PREFIX);
     }
 
     @Data

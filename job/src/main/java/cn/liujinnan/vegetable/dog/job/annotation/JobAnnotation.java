@@ -1,5 +1,6 @@
 package cn.liujinnan.vegetable.dog.job.annotation;
 
+import org.apache.shardingsphere.elasticjob.annotation.ElasticJobProp;
 import org.springframework.stereotype.Indexed;
 
 import java.lang.annotation.*;
@@ -47,6 +48,22 @@ public @interface JobAnnotation {
      * @return
      */
     String description() default "";
+
+    /**
+     * Job properties.
+     * 作业属性
+     *
+     * @return properties
+     */
+    JobProp[] props() default {};
+
+    /**
+     * Job properties.
+     * 作业属性前缀
+     *
+     * @return properties
+     */
+    String[] propsPrefixes() default {};
 
     /**
      * Sharding total count.

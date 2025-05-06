@@ -50,21 +50,28 @@ public class Test2 implements AbstractSimpleJob {
 #### 配置
 ```properties
 # 必要配置
-# 多个逗号分隔
-elasticjob.reg-center.server-lists=host:2181
+# zookeeper 多个逗号分隔
+elasticjob.reg-center.server-lists=ip1:port1,ip2:port2
 elasticjob.reg-center.namespace=namespace
 ```
 
 ### 2. 错误处理
 
+#### 钉钉预警
+jobErrorHandlerType="DT"，发送钉钉预警
 ```java
-// 新增错误处理类。jobErrorHandlerType="DT", 发送钉钉预警
 @JobAnnotation(jobErrorHandlerType="DT")
 
-// 需要配置钉钉url
-// elasticjob.jobs.props.dingtalk.webhook=https://oapi.dingtalk.com/robot/send?access_token=xxx
 
+// 可在job后台单独配置作业属性
 ```
+
+```properties
+# 需要配置钉钉url，或者作业后台配置作业属性
+elasticjob.jobs.props.dingtalk.webhook=https://oapi.dingtalk.com/robot/send?access_token=xxx
+```
+作业属性配置
+![job属性配置](static/img/job_1.png)
 
 ## utils 模块
 

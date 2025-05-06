@@ -20,12 +20,6 @@ public abstract class AbstractSimpleJob implements SimpleJob {
 
     protected Logger log = LoggerFactory.getLogger(getClass());
 
-    /**
-     * 默认空字符串
-     */
-    @Value("${job.dingtalk.webhook:}")
-    private String webhook;
-
     @Value("${vegetable.dog.job.mdc.key:TRACE_ID}")
     private String mdcKey;
 
@@ -36,10 +30,10 @@ public abstract class AbstractSimpleJob implements SimpleJob {
         String className = this.getClass().getSimpleName();
         try {
             stopWatch.start();
-            log.info("任务[{}]开始执行", className);
+            log.info("Task {} starts running", className);
             executeJob(shardingContext);
             stopWatch.stop();
-            log.info("任务[{}]执行完成, 耗时={}ms", className, stopWatch.getTotalTimeMillis());
+            log.info("Task {} is finished, it takes {}ms", className, stopWatch.getTotalTimeMillis());
         } finally {
             MDC.remove(mdcKey);
         }
